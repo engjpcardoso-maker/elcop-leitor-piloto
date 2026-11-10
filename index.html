@@ -30,7 +30,7 @@ footer{color:var(--muted)}
 </main>
 <form id="post" method="post" target="resultFrame" class="hidden"><input name="regional"><input name="entregador"><input name="qrCompleto"><input name="latitude"><input name="longitude"><input name="precisao"><input name="dataHoraCelular"></form><iframe name="resultFrame" id="resultFrame" class="hidden"></iframe>
 <script>
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwrsV6r1MEffea9sJMu8mQCo5WzgbGKCGQPtBUNebcG-wYtnJCyk-Gml-Eyzhh7OWrq/exec;
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwrsV6r1MEffea9sJMu8mQCo5WzgbGKCGQPtBUNebcG-wYtnJCyk-Gml-Eyzhh7OWrq/exec';
 const roster={'Região Norte':['Entregador 1','Entregador 2','Entregador 3'],'Região Leste':['Entregador 4','Entregador 5','Entregador 6'],'Região Sul':['Entregador 7','Entregador 8','Entregador 9']};
 const $=id=>document.getElementById(id);let scanner=null,busy=false,pending=false,n=0;
 function msg(t,c=''){ $('msg').className='msg '+c;$('msg').textContent=t;}
