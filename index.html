@@ -212,7 +212,11 @@ footer{color:var(--muted)}
 
 <script>
 
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwrsV6r1MEffea9sJMu8mQCo5WzgbGKCGQPtBUNebcG-wYtnJCyk-Gml-Eyzhh7OWrq/exec';
+/* URL ATUALIZADA DO APPS SCRIPT */
+
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxXS42-Q26H1fISWBRaGo76FRxI1_jTthOIHR4_7tHM8Xe34_ygI6X0PBkuWnnCgf2K/exec';
+
+/* CADASTRO DE REGIÕES E ENTREGADORES */
 
 const roster={
   'Região Norte':['Entregador 1','Entregador 2','Entregador 3'],
@@ -226,6 +230,8 @@ let scanner=null;
 let busy=false;
 let pending=false;
 let n=0;
+
+/* MENSAGENS DA TELA */
 
 function msg(t,c=''){
   $('msg').className='msg '+c;
@@ -242,10 +248,14 @@ $('regional').addEventListener('change',function(){
   $('courier').innerHTML='<option value="">Selecione...</option>';
 
   entregadores.forEach(function(nome){
+
     const option=document.createElement('option');
+
     option.value=nome;
     option.textContent=nome;
+
     $('courier').appendChild(option);
+
   });
 
   $('courier').disabled=entregadores.length===0;
@@ -265,15 +275,20 @@ $('start').onclick=start;
 $('pause').onclick=stop;
 
 $('change').onclick=async function(){
+
   await stop();
 
   $('scan').classList.add('hidden');
   $('setup').classList.remove('hidden');
 
   $('regional').value='';
-  $('courier').innerHTML='<option value="">Selecione primeiro a região</option>';
+
+  $('courier').innerHTML=
+    '<option value="">Selecione primeiro a região</option>';
+
   $('courier').disabled=true;
   $('start').disabled=true;
+
 };
 
 /* INICIAR CÂMERA */
@@ -321,9 +336,11 @@ async function start(){
 async function stop(){
 
   if(scanner?.isScanning){
+
     try{
       await scanner.stop();
     }catch(e){}
+
   }
 
 }
@@ -410,16 +427,22 @@ window.addEventListener('message',function(ev){
   let host='';
 
   try{
+
     host=new URL(ev.origin).hostname;
+
   }catch(e){
+
     return;
+
   }
 
   if(
     !host.endsWith('google.com')&&
     !host.endsWith('googleusercontent.com')
   ){
+
     return;
+
   }
 
   let d=ev.data;
@@ -431,7 +454,9 @@ window.addEventListener('message',function(ev){
     }
 
   }catch(e){
+
     return;
+
   }
 
   if(!d||typeof d!=='object'||typeof d.ok!=='boolean'){
@@ -452,7 +477,7 @@ window.addEventListener('message',function(ev){
     msg(
       d.result?.status==='DUPLICADA'
         ?'Leitura duplicada: salva para auditoria.'
-        :'Entrega registrada às '+horario,
+        :'Entrega registrada com sucesso! '+horario,
       'ok'
     );
 
