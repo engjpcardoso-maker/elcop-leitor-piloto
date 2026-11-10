@@ -53,5 +53,47 @@ async function onScan(qr){
  Object.keys(data).forEach(k=>f.elements[k].value=data[k]);pending=true;msg('Enviando registro para a planilha...');f.submit();
  }catch(e){msg(e.message||'Não foi possível capturar GPS.','err');busy=false;setTimeout(start,1800);}
 }
-window.addEventListener('message',ev=>{if(!/google(usercontent)?\.com$/.test(new URL(ev.origin).hostname))return;let d;try{d=JSON.parse(ev.data)}catch(e){return;}pending=false;busy=false;if(d.ok){n++;$('count').textContent=n;msg(d.result.status==='DUPLICADA'?'Leitura duplicada: salva para auditoria.':'Entrega registrada às '+d.result.horario,'ok');setTimeout(start,1400);}else{msg(d.error||'Falha no registro.','err');setTimeout(start,2000);}});
+
+window.addEventListener('message', ev => {
+  const frame = $('resultFrame');
+
+  // Aceita somente respostas do iframe de integração
+  if (!frame || ev.source !== frame.contentWindow) return;
+
+  let d = ev.data;
+
+  try {
+    if (typeof d === 'string') {
+      d = JSON.parse(d);
+      if (typeof d === 'string') d = JSON.parse(d);
+    }
+  } catch (e) {
+    msg('Erro ao interpretar a confirmação do servidor.', 'err');
+    pending = false;
+    busy = false;
+    return;
+  }
+
+  if (!d || typeof d !== 'object') return;
+
+  pending = false;
+  busy = false;
+
+  if (d.ok) {
+    n++;
+    $('count').textContent = n;
+
+    msg(
+      d.result.status === 'DUPLICADA'
+        ? 'Leitura duplicada: salva para auditoria.'
+        : 'Entrega registrada às ' + d.result.horario,
+      'ok'
+    );
+
+    setTimeout(start, 1400);
+  } else {
+    msg(d.error || 'Falha no registro.', 'err');
+    setTimeout(start, 2000);
+  }
+});
 </script></body></html>
