@@ -28,7 +28,7 @@ footer{color:var(--muted)}
 <section class="card hidden" id="scan"><div class="small">Leituras nesta sessão</div><div class="count" id="count">0</div><strong id="who"></strong><div id="reader"></div><div class="msg" id="msg">Câmera ativa. Leia a carta a ser entregue.</div><button class="secondary" id="pause">Pausar câmera</button><button id="change">Trocar entregador</button></section>
 <section class="card"><strong>Orientação</strong><p class="small">Use o endereço HTTPS do GitHub Pages e permita câmera e localização no Safari.</p></section>
 </main>
-<form id="post" method="post" target="resultFrame" class="hidden"><input name="regional"><input name="entregador"><input name="qrCompleto"><input name="latitude"><input name="longitude"><input name="precisao"><input name="dataHoraCelular"></form><iframe name="resultFrame" id="resultFrame" class="hidden"></iframe>
+<form id="post" method="post" target="resultFrame" class="hidden"><input name="regiao"><input name="entregador"><input name="qrCompleto"><input name="latitude"><input name="longitude"><input name="precisao"><input name="dataHoraCelular"></form><iframe name="resultFrame" id="resultFrame" class="hidden"></iframe>
 <script>
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwrsV6r1MEffea9sJMu8mQCo5WzgbGKCGQPtBUNebcG-wYtnJCyk-Gml-Eyzhh7OWrq/exec';
 const roster={'Região Norte':['Entregador 1','Entregador 2','Entregador 3'],'Região Leste':['Entregador 4','Entregador 5','Entregador 6'],'Região Sul':['Entregador 7','Entregador 8','Entregador 9']};
