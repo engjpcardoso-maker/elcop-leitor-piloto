@@ -49,7 +49,9 @@ async function onScan(qr){
  if(busy||pending)return;busy=true;await stop();msg('QR lido. Capturando GPS...');
  try{let pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{enableHighAccuracy:true,timeout:15000,maximumAge:0}));
  if(APPS_SCRIPT_URL.includes('COLE_AQUI'))throw Error('Configure a URL do Apps Script no leitor.html.');
- let f=$('post');f.action=APPS_SCRIPT_URL;let data={regiao:$('regional').value,entregador:$('courier').value,qrCompleto:qr,latitude:pos.coords.latitude,longitude:pos.coords.longitude,precisao:pos.coords.accuracy,dataHoraCelular:new Date().toISOString()};
+ let f=$('post');f.action=APPS_SCRIPT_URL;let data={regiao:$('regional').value,entregador:$('courier').value,qrCompleto:qr,latitude:pos.coords.latitude,longitude:pos.coords.longitude,precisao:pos.coords.accuracy,dataHoraCelular:new Date().toLocaleString('pt-BR',{
+  timeZone:'America/Sao_Paulo',
+  hour12:false;
  Object.keys(data).forEach(k=>f.elements[k].value=data[k]);pending=true;msg('Enviando registro para a planilha...');f.submit();
  }catch(e){msg(e.message||'Não foi possível capturar GPS.','err');busy=false;setTimeout(start,1800);}
 }
