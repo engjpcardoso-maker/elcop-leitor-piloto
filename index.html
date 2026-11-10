@@ -54,8 +54,6 @@ async function onScan(qr){
  }catch(e){msg(e.message||'Não foi possível capturar GPS.','err');busy=false;setTimeout(start,1800);}
 }
 
-
-
 window.addEventListener('message', ev => {
   let host = '';
 
@@ -105,4 +103,7 @@ window.addEventListener('message', ev => {
     setTimeout(start, 2000);
   }
 });
+
+
+
 </script></body></html>
