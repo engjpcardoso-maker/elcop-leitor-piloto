@@ -1,15 +1,15 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ELCOP | Leitor</title>
 
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
 <style>
-:root{
+:root {
   --grená:#801e27;
   --grená-escuro:#64151d;
   --grafite:#424242;
@@ -18,122 +18,129 @@
   --rosa-claro:#f4e9eb;
   --texto:#282426;
   --muted:#756b6d;
-  --sucesso:#176b43
+  --sucesso:#176b43;
 }
 
-*{box-sizing:border-box}
+* { box-sizing:border-box; }
 
-body{
+body {
   margin:0;
   background:var(--fundo);
   color:var(--texto);
-  font-family:Arial,sans-serif
+  font-family:Arial,sans-serif;
 }
 
-main{
+main {
   max-width:540px;
   margin:auto;
-  padding:16px
+  padding:16px;
 }
 
-.card{
+.card {
   background:#fff;
   border:1px solid var(--borda);
   border-radius:18px;
   padding:17px;
-  margin:12px 0
+  margin:12px 0;
 }
 
-.brand-logo{
+.brand-logo {
   display:block;
   width:min(100%,270px);
   height:auto;
   object-fit:contain;
   object-position:left center;
-  margin:0 0 10px
+  margin:0 0 10px;
 }
 
-h1{
+h1 {
   font-size:24px;
   color:var(--grafite);
-  margin:8px 0
+  margin:8px 0;
 }
 
-label{
+label {
   display:block;
   font-weight:bold;
   margin:14px 0 7px;
-  color:var(--grafite)
+  color:var(--grafite);
 }
 
-select,button{
+select,button {
   width:100%;
   padding:14px;
   border-radius:12px;
-  font-size:16px
+  font-size:16px;
 }
 
-select{
+select {
   background:white;
   border:1px solid #d9c9cc;
-  color:var(--texto)
+  color:var(--texto);
 }
 
-button{
+button {
   background:var(--grená);
   color:white;
   border:0;
   font-weight:bold;
-  margin-top:14px
+  margin-top:14px;
+  cursor:pointer;
 }
 
-button:active{background:var(--grená-escuro)}
+button:disabled { opacity:.5; }
 
-button.secondary{
+button.secondary {
   background:var(--rosa-claro);
-  color:var(--grená)
+  color:var(--grená);
 }
 
-button:disabled{opacity:.5}
+.hidden { display:none!important; }
 
-.hidden{display:none!important}
-
-.msg{
+.msg {
   padding:13px;
   border-radius:12px;
   background:#f1ecec;
   margin-top:12px;
   line-height:1.4;
-  color:var(--grafite)
+  color:var(--grafite);
+  overflow-wrap:anywhere;
 }
 
-.ok{
+.ok {
   background:#e6f3eb;
-  color:var(--sucesso)
+  color:var(--sucesso);
 }
 
-.err{
+.err {
   background:#fdebea;
-  color:#a22b25
+  color:#a22b25;
 }
 
-.warn{
+.warn {
   background:#fff4df;
-  color:#805400
+  color:#805400;
 }
 
-.small{
+.small {
   font-size:12px;
-  color:var(--muted)
+  color:var(--muted);
 }
 
-.count{
+.count {
   font-size:32px;
   color:var(--grená);
-  font-weight:bold
+  font-weight:bold;
 }
 
-footer{color:var(--muted)}
+#reader {
+  width:100%;
+  margin-top:12px;
+}
+
+#reader video {
+  border-radius:12px;
+}
 </style>
 </head>
 
@@ -198,7 +205,7 @@ footer{color:var(--muted)}
 
 </main>
 
-<form id="post" method="post" target="resultFrame" class="hidden">
+<form id="post" method="POST" target="resultFrame" class="hidden">
   <input name="regiao">
   <input name="entregador">
   <input name="qrCompleto">
@@ -208,162 +215,303 @@ footer{color:var(--muted)}
   <input name="dataHoraCelular">
 </form>
 
-<iframe name="resultFrame" id="resultFrame" class="hidden"></iframe>
+<iframe
+  name="resultFrame"
+  id="resultFrame"
+  class="hidden"
+  title="Retorno do registro">
+</iframe>
 
 <script>
 
-/* URL ATUALIZADA DO APPS SCRIPT */
+/* =====================================
+   URL ATUAL DO APPS SCRIPT
+===================================== */
 
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxXS42-Q26H1fISWBRaGo76FRxI1_jTthOIHR4_7tHM8Xe34_ygI6X0PBkuWnnCgf2K/exec';
+const APPS_SCRIPT_URL =
+'https://script.google.com/macros/s/AKfycbyuzY_jwR7IQmdhPjbpRk16PDa8rvdf7p44FIbOnVIWdq9nvZStsVL_PYHg_jAVp8H5/exec';
 
-/* CADASTRO DE REGIÕES E ENTREGADORES */
+/* =====================================
+   CADASTRO DE REGIÕES
+===================================== */
 
-const roster={
-  'Região Norte':['Entregador 1','Entregador 2','Entregador 3'],
-  'Região Leste':['Entregador 4','Entregador 5','Entregador 6'],
-  'Região Sul':['Entregador 7','Entregador 8','Entregador 9']
+const roster = {
+  'Região Norte': [
+    'Entregador 1',
+    'Entregador 2',
+    'Entregador 3'
+  ],
+  'Região Leste': [
+    'Entregador 4',
+    'Entregador 5',
+    'Entregador 6'
+  ],
+  'Região Sul': [
+    'Entregador 7',
+    'Entregador 8',
+    'Entregador 9'
+  ]
 };
 
-const $=id=>document.getElementById(id);
+const $ = id => document.getElementById(id);
 
-let scanner=null;
-let busy=false;
-let pending=false;
-let n=0;
+let scanner = null;
+let busy = false;
+let pending = false;
+let n = 0;
+let submissionTimer = null;
 
-/* MENSAGENS DA TELA */
+/* =====================================
+   MENSAGENS
+===================================== */
 
-function msg(t,c=''){
-  $('msg').className='msg '+c;
-  $('msg').textContent=t;
+function msg(text, type='') {
+  $('msg').className = 'msg ' + type;
+  $('msg').textContent = text;
 }
 
-/* CARREGAMENTO DOS ENTREGADORES */
+/* =====================================
+   REGIÃO E ENTREGADORES
+===================================== */
 
-$('regional').addEventListener('change',function(){
+$('regional').addEventListener('change', function() {
 
-  const regiao=this.value;
-  const entregadores=roster[regiao]||[];
+  const regiao = this.value;
+  const entregadores = roster[regiao] || [];
 
-  $('courier').innerHTML='<option value="">Selecione...</option>';
+  $('courier').innerHTML =
+    '<option value="">Selecione...</option>';
 
-  entregadores.forEach(function(nome){
-
-    const option=document.createElement('option');
-
-    option.value=nome;
-    option.textContent=nome;
-
+  entregadores.forEach(nome => {
+    const option = document.createElement('option');
+    option.value = nome;
+    option.textContent = nome;
     $('courier').appendChild(option);
-
   });
 
-  $('courier').disabled=entregadores.length===0;
-  $('start').disabled=entregadores.length===0;
+  $('courier').disabled = entregadores.length === 0;
+  $('start').disabled = entregadores.length === 0;
 
 });
 
-/* HABILITAR INÍCIO DA LEITURA */
-
-$('courier').addEventListener('change',function(){
-  $('start').disabled=!this.value;
+$('courier').addEventListener('change', function() {
+  $('start').disabled = !this.value;
 });
 
-/* BOTÕES */
+/* =====================================
+   BOTÕES
+===================================== */
 
-$('start').onclick=start;
-$('pause').onclick=stop;
+$('start').onclick = start;
+$('pause').onclick = stop;
 
-$('change').onclick=async function(){
+$('change').onclick = async function() {
 
   await stop();
+  limparTemporizador();
 
   $('scan').classList.add('hidden');
   $('setup').classList.remove('hidden');
 
-  $('regional').value='';
+  $('regional').value = '';
 
-  $('courier').innerHTML=
+  $('courier').innerHTML =
     '<option value="">Selecione primeiro a região</option>';
 
-  $('courier').disabled=true;
-  $('start').disabled=true;
+  $('courier').disabled = true;
+  $('start').disabled = true;
 
 };
 
-/* INICIAR CÂMERA */
+/* =====================================
+   INICIAR CÂMERA
+===================================== */
 
-async function start(){
+async function start() {
 
-  if(!$('regional').value||!$('courier').value){
+  if (busy || pending) return;
+
+  if (!$('regional').value || !$('courier').value) {
     alert('Selecione a região e o entregador.');
     return;
   }
 
-  if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){
-    alert('Abra o leitor diretamente no Safari, pelo endereço HTTPS do GitHub Pages.');
+  if (
+    !window.isSecureContext ||
+    !navigator.mediaDevices?.getUserMedia
+  ) {
+    alert(
+      'Abra o leitor diretamente no Safari, pelo endereço HTTPS do GitHub Pages.'
+    );
     return;
   }
 
   $('setup').classList.add('hidden');
   $('scan').classList.remove('hidden');
 
-  $('who').textContent=$('courier').value;
+  $('who').textContent = $('courier').value;
 
-  try{
+  try {
 
-    scanner=new Html5Qrcode('reader');
+    if (!scanner) {
+      scanner = new Html5Qrcode('reader');
+    }
+
+    if (scanner.isScanning) {
+      await scanner.stop();
+    }
 
     await scanner.start(
-      {facingMode:'environment'},
-      {fps:10,qrbox:{width:240,height:240}},
+      { facingMode:'environment' },
+      { fps:10, qrbox:{width:240,height:240} },
       onScan,
-      ()=>{}
+      () => {}
     );
 
     msg('Câmera ativa. Leia a carta a ser entregue.');
 
-  }catch(e){
+  } catch(e) {
 
-    msg('Falha ao abrir câmera: '+(e.message||e),'err');
+    msg(
+      'Falha ao abrir câmera: ' + (e.message || e),
+      'err'
+    );
 
   }
 
 }
 
-/* PARAR CÂMERA */
+/* =====================================
+   PARAR CÂMERA
+===================================== */
 
-async function stop(){
+async function stop() {
 
-  if(scanner?.isScanning){
-
-    try{
+  if (scanner && scanner.isScanning) {
+    try {
       await scanner.stop();
-    }catch(e){}
+    } catch(e) {
+      console.log('Erro ao parar câmera:', e);
+    }
+  }
+
+}
+
+/* =====================================
+   TEMPORIZADOR
+===================================== */
+
+function limparTemporizador() {
+
+  if (submissionTimer) {
+    clearTimeout(submissionTimer);
+    submissionTimer = null;
+  }
+
+}
+
+/* =====================================
+   PROCESSAR RESPOSTA
+===================================== */
+
+function processarResposta(data) {
+
+  if (!data || typeof data !== 'object') return;
+  if (typeof data.ok !== 'boolean') return;
+  if (!pending) return;
+
+  limparTemporizador();
+
+  pending = false;
+  busy = false;
+
+  if (data.ok) {
+
+    n++;
+    $('count').textContent = n;
+
+    const horario = data.result?.horario || '';
+
+    if (data.result?.status === 'DUPLICADA') {
+
+      msg(
+        'Leitura duplicada: salva para auditoria.',
+        'warn'
+      );
+
+    } else {
+
+      msg(
+        'Entrega registrada com sucesso! ' + horario,
+        'ok'
+      );
+
+    }
+
+    setTimeout(() => {
+      if (!pending && !busy) start();
+    }, 1400);
+
+  } else {
+
+    msg(
+      data.error || 'Falha no registro.',
+      'err'
+    );
+
+    setTimeout(() => {
+      if (!pending && !busy) start();
+    }, 2000);
 
   }
 
 }
 
-/* LEITURA DO QR CODE E CAPTURA DO GPS */
+/* =====================================
+   RECEBER CONFIRMAÇÃO DO APPS SCRIPT
+===================================== */
 
-async function onScan(qr){
+window.addEventListener('message', function(ev) {
 
-  if(busy||pending)return;
+  let data = ev.data;
 
-  busy=true;
+  if (typeof data === 'string') {
+    try {
+      data = JSON.parse(data);
+    } catch(e) {
+      return;
+    }
+  }
+
+  if (!data || typeof data !== 'object') return;
+  if (typeof data.ok !== 'boolean') return;
+  if (!pending) return;
+
+  processarResposta(data);
+
+});
+
+/* =====================================
+   LEITURA DO QR CODE E GPS
+===================================== */
+
+async function onScan(qr) {
+
+  if (busy || pending) return;
+
+  busy = true;
 
   await stop();
 
   msg('QR lido. Capturando GPS...');
 
-  try{
+  try {
 
-    const pos=await new Promise((res,rej)=>{
+    const pos = await new Promise((resolve, reject) => {
 
       navigator.geolocation.getCurrentPosition(
-        res,
-        rej,
+        resolve,
+        reject,
         {
           enableHighAccuracy:true,
           timeout:15000,
@@ -373,127 +521,75 @@ async function onScan(qr){
 
     });
 
-    const form=$('post');
+    const form = $('post');
 
-    form.action=APPS_SCRIPT_URL;
+    form.action = APPS_SCRIPT_URL;
 
-    const data={
+    const data = {
 
-      regiao:$('regional').value,
+      regiao: $('regional').value,
 
-      entregador:$('courier').value,
+      entregador: $('courier').value,
 
-      qrCompleto:qr,
+      qrCompleto: qr,
 
-      latitude:pos.coords.latitude,
+      latitude: pos.coords.latitude,
 
-      longitude:pos.coords.longitude,
+      longitude: pos.coords.longitude,
 
-      precisao:pos.coords.accuracy,
+      precisao: pos.coords.accuracy,
 
-      dataHoraCelular:new Date().toLocaleString('sv-SE',{
-        timeZone:'America/Sao_Paulo',
-        hour12:false
-      })
+      dataHoraCelular: new Date().toLocaleString(
+        'sv-SE',
+        {
+          timeZone:'America/Sao_Paulo',
+          hour12:false
+        }
+      )
 
     };
 
-    Object.keys(data).forEach(function(k){
-      form.elements[k].value=data[k];
+    Object.keys(data).forEach(key => {
+      form.elements[key].value = data[key];
     });
 
-    pending=true;
+    pending = true;
 
     msg('Enviando registro para a planilha...');
 
+    submissionTimer = setTimeout(() => {
+
+      if (pending) {
+
+        pending = false;
+        busy = false;
+
+        msg(
+          'O registro pode ter sido enviado, mas não recebemos a confirmação. Confira a planilha antes de tentar novamente.',
+          'warn'
+        );
+
+      }
+
+    }, 15000);
+
     form.submit();
 
-  }catch(e){
+  } catch(e) {
 
-    msg(e.message||'Não foi possível capturar GPS.','err');
+    busy = false;
 
-    busy=false;
+    msg(
+      e.message || 'Não foi possível capturar GPS.',
+      'err'
+    );
 
-    setTimeout(start,1800);
+    setTimeout(start, 2000);
 
   }
 
 }
 
-/* RECEBER CONFIRMAÇÃO DO APPS SCRIPT */
-
-window.addEventListener('message',function(ev){
-
-  let host='';
-
-  try{
-
-    host=new URL(ev.origin).hostname;
-
-  }catch(e){
-
-    return;
-
-  }
-
-  if(
-    !host.endsWith('google.com')&&
-    !host.endsWith('googleusercontent.com')
-  ){
-
-    return;
-
-  }
-
-  let d=ev.data;
-
-  try{
-
-    for(let i=0;i<2&&typeof d==='string';i++){
-      d=JSON.parse(d);
-    }
-
-  }catch(e){
-
-    return;
-
-  }
-
-  if(!d||typeof d!=='object'||typeof d.ok!=='boolean'){
-    return;
-  }
-
-  pending=false;
-  busy=false;
-
-  if(d.ok){
-
-    n++;
-
-    $('count').textContent=n;
-
-    const horario=d.result?.horario||'';
-
-    msg(
-      d.result?.status==='DUPLICADA'
-        ?'Leitura duplicada: salva para auditoria.'
-        :'Entrega registrada com sucesso! '+horario,
-      'ok'
-    );
-
-    setTimeout(start,1400);
-
-  }else{
-
-    msg(d.error||'Falha no registro.','err');
-
-    setTimeout(start,2000);
-
-  }
-
-});
-
 </script>
-
 </body>
 </html>
