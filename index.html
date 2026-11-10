@@ -41,7 +41,7 @@ $('change').onclick=async()=>{await stop();$('scan').classList.add('hidden');$('
 async function start(){
  if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){alert('Abra o leitor diretamente no Safari, pelo endereço HTTPS do GitHub Pages.');return;}
  $('setup').classList.add('hidden');$('scan').classList.remove('hidden');$('who').textContent=$('courier').value;
- try{scanner=new Html5Qrcode('reader');await scanner.start({facingMode:'environment'},{fps:10,qrbox:{width:240,height:240}},onScan,()=>{});msg('Câmera ativa. Leia uma carta já entregue.');}
+ try{scanner=new Html5Qrcode('reader');await scanner.start({facingMode:'environment'},{fps:10,qrbox:{width:240,height:240}},onScan,()=>{});msg('Câmera ativa. Leia uma carta a ser entregue.');}
  catch(e){msg('Falha ao abrir câmera: '+(e.message||e),'err');}
 }
 async function stop(){if(scanner?.isScanning){try{await scanner.stop();}catch(e){}}}
