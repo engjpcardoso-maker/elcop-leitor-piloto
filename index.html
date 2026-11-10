@@ -1,113 +1,474 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>ELCOP | Leitor</title><script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ELCOP | Leitor</title>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
 <style>
-:root{--grená:#801e27;--grená-escuro:#64151d;--grafite:#424242;--fundo:#f7f4f4;--borda:#e8dcde;--rosa-claro:#f4e9eb;--texto:#282426;--muted:#756b6d;--sucesso:#176b43}
+:root{
+  --grená:#801e27;
+  --grená-escuro:#64151d;
+  --grafite:#424242;
+  --fundo:#f7f4f4;
+  --borda:#e8dcde;
+  --rosa-claro:#f4e9eb;
+  --texto:#282426;
+  --muted:#756b6d;
+  --sucesso:#176b43
+}
+
 *{box-sizing:border-box}
-body{margin:0;background:var(--fundo);color:var(--texto);font-family:Arial,sans-serif}
-main{max-width:540px;margin:auto;padding:16px}
-.card{background:#fff;border:1px solid var(--borda);border-radius:18px;padding:17px;margin:12px 0}
-.brand-logo{display:block;width:min(100%,270px);height:auto;object-fit:contain;object-position:left center;margin:0 0 10px}
-h1{font-size:24px;color:var(--grafite);margin:8px 0}
-label{display:block;font-weight:bold;margin:14px 0 7px;color:var(--grafite)}
-select,button{width:100%;padding:14px;border-radius:12px;font-size:16px}
-select{background:white;border:1px solid #d9c9cc;color:var(--texto)}
-button{background:var(--grená);color:white;border:0;font-weight:bold;margin-top:14px}
+
+body{
+  margin:0;
+  background:var(--fundo);
+  color:var(--texto);
+  font-family:Arial,sans-serif
+}
+
+main{
+  max-width:540px;
+  margin:auto;
+  padding:16px
+}
+
+.card{
+  background:#fff;
+  border:1px solid var(--borda);
+  border-radius:18px;
+  padding:17px;
+  margin:12px 0
+}
+
+.brand-logo{
+  display:block;
+  width:min(100%,270px);
+  height:auto;
+  object-fit:contain;
+  object-position:left center;
+  margin:0 0 10px
+}
+
+h1{
+  font-size:24px;
+  color:var(--grafite);
+  margin:8px 0
+}
+
+label{
+  display:block;
+  font-weight:bold;
+  margin:14px 0 7px;
+  color:var(--grafite)
+}
+
+select,button{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  font-size:16px
+}
+
+select{
+  background:white;
+  border:1px solid #d9c9cc;
+  color:var(--texto)
+}
+
+button{
+  background:var(--grená);
+  color:white;
+  border:0;
+  font-weight:bold;
+  margin-top:14px
+}
+
 button:active{background:var(--grená-escuro)}
-button.secondary{background:var(--rosa-claro);color:var(--grená)}
+
+button.secondary{
+  background:var(--rosa-claro);
+  color:var(--grená)
+}
+
 button:disabled{opacity:.5}
+
 .hidden{display:none!important}
-.msg{padding:13px;border-radius:12px;background:#f1ecec;margin-top:12px;line-height:1.4;color:var(--grafite)}
-.ok{background:#e6f3eb;color:var(--sucesso)}
-.err{background:#fdebea;color:#a22b25}
-.warn{background:#fff4df;color:#805400}
-.small{font-size:12px;color:var(--muted)}
-.count{font-size:32px;color:var(--grená);font-weight:bold}
+
+.msg{
+  padding:13px;
+  border-radius:12px;
+  background:#f1ecec;
+  margin-top:12px;
+  line-height:1.4;
+  color:var(--grafite)
+}
+
+.ok{
+  background:#e6f3eb;
+  color:var(--sucesso)
+}
+
+.err{
+  background:#fdebea;
+  color:#a22b25
+}
+
+.warn{
+  background:#fff4df;
+  color:#805400
+}
+
+.small{
+  font-size:12px;
+  color:var(--muted)
+}
+
+.count{
+  font-size:32px;
+  color:var(--grená);
+  font-weight:bold
+}
+
 footer{color:var(--muted)}
-</style></head><body><main>
-<section class="card"><img class="brand-logo" src="logo-elcop.png" alt="ELCOP"><h1>Controle de Entregas</h1><div>Leitor de QR Code – piloto</div></section>
-<section class="card" id="setup"><label>1. Selecione a região</label><select id="regional"><option value="">Selecione...</option><option>Região Norte</option><option>Região Leste</option><option>Região Sul</option></select><label>2. Selecione o entregador</label><select id="courier" disabled><option>Selecione primeiro a região</option></select><button id="start" disabled>Iniciar leitura</button><p class="small">A identificação permanece nesta sessão. O registro só é confirmado após a captura do GPS.</p></section>
-<section class="card hidden" id="scan"><div class="small">Leituras nesta sessão</div><div class="count" id="count">0</div><strong id="who"></strong><div id="reader"></div><div class="msg" id="msg">Câmera ativa. Leia a carta a ser entregue.</div><button class="secondary" id="pause">Pausar câmera</button><button id="change">Trocar entregador</button></section>
-<section class="card"><strong>Orientação</strong><p class="small">Use o endereço HTTPS do GitHub Pages e permita câmera e localização no Safari.</p></section>
+</style>
+</head>
+
+<body>
+<main>
+
+<section class="card">
+  <img class="brand-logo" src="logo-elcop.png" alt="ELCOP">
+  <h1>Controle de Entregas</h1>
+  <div>Leitor de QR Code – piloto</div>
+</section>
+
+<section class="card" id="setup">
+
+  <label>1. Selecione a região</label>
+
+  <select id="regional">
+    <option value="">Selecione...</option>
+    <option value="Região Norte">Região Norte</option>
+    <option value="Região Leste">Região Leste</option>
+    <option value="Região Sul">Região Sul</option>
+  </select>
+
+  <label>2. Selecione o entregador</label>
+
+  <select id="courier" disabled>
+    <option value="">Selecione primeiro a região</option>
+  </select>
+
+  <button id="start" disabled>Iniciar leitura</button>
+
+  <p class="small">
+    A identificação permanece nesta sessão. O registro só é confirmado após a captura do GPS.
+  </p>
+
+</section>
+
+<section class="card hidden" id="scan">
+
+  <div class="small">Leituras nesta sessão</div>
+  <div class="count" id="count">0</div>
+
+  <strong id="who"></strong>
+
+  <div id="reader"></div>
+
+  <div class="msg" id="msg">
+    Câmera ativa. Leia a carta a ser entregue.
+  </div>
+
+  <button class="secondary" id="pause">Pausar câmera</button>
+  <button id="change">Trocar entregador</button>
+
+</section>
+
+<section class="card">
+  <strong>Orientação</strong>
+  <p class="small">
+    Use o endereço HTTPS do GitHub Pages e permita câmera e localização no Safari.
+  </p>
+</section>
+
 </main>
-<form id="post" method="post" target="resultFrame" class="hidden"><input name="regiao"><input name="entregador"><input name="qrCompleto"><input name="latitude"><input name="longitude"><input name="precisao"><input name="dataHoraCelular"></form><iframe name="resultFrame" id="resultFrame" class="hidden"></iframe>
+
+<form id="post" method="post" target="resultFrame" class="hidden">
+  <input name="regiao">
+  <input name="entregador">
+  <input name="qrCompleto">
+  <input name="latitude">
+  <input name="longitude">
+  <input name="precisao">
+  <input name="dataHoraCelular">
+</form>
+
+<iframe name="resultFrame" id="resultFrame" class="hidden"></iframe>
+
 <script>
+
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwrsV6r1MEffea9sJMu8mQCo5WzgbGKCGQPtBUNebcG-wYtnJCyk-Gml-Eyzhh7OWrq/exec';
-const roster={'Região Norte':['Entregador 1','Entregador 2','Entregador 3'],'Região Leste':['Entregador 4','Entregador 5','Entregador 6'],'Região Sul':['Entregador 7','Entregador 8','Entregador 9']};
-const $=id=>document.getElementById(id);let scanner=null,busy=false,pending=false,n=0;
-function msg(t,c=''){ $('msg').className='msg '+c;$('msg').textContent=t;}
-$('regional').onchange=()=>{let a=roster[$('regional').value]||[];$('courier').innerHTML='<option value="">Selecione...</option>';a.forEach(x=>{let o=document.createElement('option');o.value=x;o.textContent=x;$('courier').appendChild(o)});$('courier').disabled=!a.length;$('start').disabled=!a.length;};
+
+const roster={
+  'Região Norte':['Entregador 1','Entregador 2','Entregador 3'],
+  'Região Leste':['Entregador 4','Entregador 5','Entregador 6'],
+  'Região Sul':['Entregador 7','Entregador 8','Entregador 9']
+};
+
+const $=id=>document.getElementById(id);
+
+let scanner=null;
+let busy=false;
+let pending=false;
+let n=0;
+
+function msg(t,c=''){
+  $('msg').className='msg '+c;
+  $('msg').textContent=t;
+}
+
+/* CARREGAMENTO DOS ENTREGADORES */
+
+$('regional').addEventListener('change',function(){
+
+  const regiao=this.value;
+  const entregadores=roster[regiao]||[];
+
+  $('courier').innerHTML='<option value="">Selecione...</option>';
+
+  entregadores.forEach(function(nome){
+    const option=document.createElement('option');
+    option.value=nome;
+    option.textContent=nome;
+    $('courier').appendChild(option);
+  });
+
+  $('courier').disabled=entregadores.length===0;
+  $('start').disabled=entregadores.length===0;
+
+});
+
+/* HABILITAR INÍCIO DA LEITURA */
+
+$('courier').addEventListener('change',function(){
+  $('start').disabled=!this.value;
+});
+
+/* BOTÕES */
+
 $('start').onclick=start;
 $('pause').onclick=stop;
-$('change').onclick=async()=>{await stop();$('scan').classList.add('hidden');$('setup').classList.remove('hidden');};
+
+$('change').onclick=async function(){
+  await stop();
+
+  $('scan').classList.add('hidden');
+  $('setup').classList.remove('hidden');
+
+  $('regional').value='';
+  $('courier').innerHTML='<option value="">Selecione primeiro a região</option>';
+  $('courier').disabled=true;
+  $('start').disabled=true;
+};
+
+/* INICIAR CÂMERA */
+
 async function start(){
- if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){alert('Abra o leitor diretamente no Safari, pelo endereço HTTPS do GitHub Pages.');return;}
- $('setup').classList.add('hidden');$('scan').classList.remove('hidden');$('who').textContent=$('courier').value;
- try{scanner=new Html5Qrcode('reader');await scanner.start({facingMode:'environment'},{fps:10,qrbox:{width:240,height:240}},onScan,()=>{});msg('Câmera ativa. Leia uma carta a ser entregue.');}
- catch(e){msg('Falha ao abrir câmera: '+(e.message||e),'err');}
+
+  if(!$('regional').value||!$('courier').value){
+    alert('Selecione a região e o entregador.');
+    return;
+  }
+
+  if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){
+    alert('Abra o leitor diretamente no Safari, pelo endereço HTTPS do GitHub Pages.');
+    return;
+  }
+
+  $('setup').classList.add('hidden');
+  $('scan').classList.remove('hidden');
+
+  $('who').textContent=$('courier').value;
+
+  try{
+
+    scanner=new Html5Qrcode('reader');
+
+    await scanner.start(
+      {facingMode:'environment'},
+      {fps:10,qrbox:{width:240,height:240}},
+      onScan,
+      ()=>{}
+    );
+
+    msg('Câmera ativa. Leia a carta a ser entregue.');
+
+  }catch(e){
+
+    msg('Falha ao abrir câmera: '+(e.message||e),'err');
+
+  }
+
 }
-async function stop(){if(scanner?.isScanning){try{await scanner.stop();}catch(e){}}}
+
+/* PARAR CÂMERA */
+
+async function stop(){
+
+  if(scanner?.isScanning){
+    try{
+      await scanner.stop();
+    }catch(e){}
+  }
+
+}
+
+/* LEITURA DO QR CODE E CAPTURA DO GPS */
+
 async function onScan(qr){
- if(busy||pending)return;busy=true;await stop();msg('QR lido. Capturando GPS...');
- try{let pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{enableHighAccuracy:true,timeout:15000,maximumAge:0}));
- if(APPS_SCRIPT_URL.includes('COLE_AQUI'))throw Error('Configure a URL do Apps Script no leitor.html.');
- let f=$('post');f.action=APPS_SCRIPT_URL;let data={regiao:$('regional').value,entregador:$('courier').value,qrCompleto:qr,latitude:pos.coords.latitude,longitude:pos.coords.longitude,precisao:pos.coords.accuracy,
-dataHoraCelular:new Date().toLocaleString('sv-SE',{
-  timeZone:'America/Sao_Paulo',
-  hour12:false
-})
- Object.keys(data).forEach(k=>f.elements[k].value=data[k]);pending=true;msg('Enviando registro para a planilha...');f.submit();
- }catch(e){msg(e.message||'Não foi possível capturar GPS.','err');busy=false;setTimeout(start,1800);}
+
+  if(busy||pending)return;
+
+  busy=true;
+
+  await stop();
+
+  msg('QR lido. Capturando GPS...');
+
+  try{
+
+    const pos=await new Promise((res,rej)=>{
+
+      navigator.geolocation.getCurrentPosition(
+        res,
+        rej,
+        {
+          enableHighAccuracy:true,
+          timeout:15000,
+          maximumAge:0
+        }
+      );
+
+    });
+
+    const form=$('post');
+
+    form.action=APPS_SCRIPT_URL;
+
+    const data={
+
+      regiao:$('regional').value,
+
+      entregador:$('courier').value,
+
+      qrCompleto:qr,
+
+      latitude:pos.coords.latitude,
+
+      longitude:pos.coords.longitude,
+
+      precisao:pos.coords.accuracy,
+
+      dataHoraCelular:new Date().toLocaleString('sv-SE',{
+        timeZone:'America/Sao_Paulo',
+        hour12:false
+      })
+
+    };
+
+    Object.keys(data).forEach(function(k){
+      form.elements[k].value=data[k];
+    });
+
+    pending=true;
+
+    msg('Enviando registro para a planilha...');
+
+    form.submit();
+
+  }catch(e){
+
+    msg(e.message||'Não foi possível capturar GPS.','err');
+
+    busy=false;
+
+    setTimeout(start,1800);
+
+  }
+
 }
 
-window.addEventListener('message', ev => {
-  let host = '';
+/* RECEBER CONFIRMAÇÃO DO APPS SCRIPT */
 
-  try {
-    host = new URL(ev.origin).hostname;
-  } catch (e) {
+window.addEventListener('message',function(ev){
+
+  let host='';
+
+  try{
+    host=new URL(ev.origin).hostname;
+  }catch(e){
     return;
   }
 
-  if (
-    !host.endsWith('google.com') &&
+  if(
+    !host.endsWith('google.com')&&
     !host.endsWith('googleusercontent.com')
-  ) return;
-
-  let d = ev.data;
-
-  // O Apps Script pode devolver o JSON duplamente codificado
-  try {
-    for (let i = 0; i < 2 && typeof d === 'string'; i++) {
-      d = JSON.parse(d);
-    }
-  } catch (e) {
+  ){
     return;
   }
 
-  if (!d || typeof d !== 'object' || typeof d.ok !== 'boolean') return;
+  let d=ev.data;
 
-  pending = false;
-  busy = false;
+  try{
 
-  if (d.ok) {
+    for(let i=0;i<2&&typeof d==='string';i++){
+      d=JSON.parse(d);
+    }
+
+  }catch(e){
+    return;
+  }
+
+  if(!d||typeof d!=='object'||typeof d.ok!=='boolean'){
+    return;
+  }
+
+  pending=false;
+  busy=false;
+
+  if(d.ok){
+
     n++;
-    $('count').textContent = n;
 
-    const horario = d.result?.horario || '';
+    $('count').textContent=n;
+
+    const horario=d.result?.horario||'';
 
     msg(
-      d.result?.status === 'DUPLICADA'
-        ? 'Leitura duplicada: salva para auditoria.'
-        : 'Entrega registrada às ' + horario,
+      d.result?.status==='DUPLICADA'
+        ?'Leitura duplicada: salva para auditoria.'
+        :'Entrega registrada às '+horario,
       'ok'
     );
 
-    setTimeout(start, 1400);
-  } else {
-    msg(d.error || 'Falha no registro.', 'err');
-    setTimeout(start, 2000);
+    setTimeout(start,1400);
+
+  }else{
+
+    msg(d.error||'Falha no registro.','err');
+
+    setTimeout(start,2000);
+
   }
+
 });
 
+</script>
 
-
-</script></body></html>
+</body>
+</html>
